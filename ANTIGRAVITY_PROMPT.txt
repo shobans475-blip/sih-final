@@ -1,0 +1,78 @@
+================================================================================
+TRUSTLENS AI — SYSTEM DESIGN & AGENTIC SPECIFICATION PROMPT
+AI Document Screening, Tampering Forensics & KYC Biometrics Platform
+================================================================================
+
+PROJECT OVERVIEW:
+Build and maintain an end-to-end, zero-trust AI Document Screening and KYC Verification
+platform designed for government and enterprise security audits (Smart India Hackathon).
+The system must automatically ingest Indian identity documents (Aadhaar, PAN, Passport,
+Voter ID, Driving License), detect digital image forgeries, verify algorithmic checksums,
+and execute biometric facial comparison against live selfies.
+
+DIRECTORY STRUCTURE:
+AI_Document_Screening/
+├── backend/
+│   ├── main.py              # FastAPI server orchestrating the 5-pillar verification pipeline
+│   ├── requirements.txt     # Python dependencies (FastAPI, OpenCV, Pillow, Google-GenAI, etc.)
+│   └── services/
+│       ├── ocr.py           # Gemini 2.5 Flash Multimodal Vision + Local OpenCV / QR Fallback
+│       ├── validation.py    # Aadhaar Verhoeff Dihedral D5 Checksum + PAN Entity Syntax + DOB
+│       ├── tamper.py        # Error Level Analysis (ELA), JET Heatmaps, Noise Variance & EXIF
+│       ├── face.py          # Biometric Face Extraction, Multi-Metric Match & Passive Liveness
+│       ├── risk.py          # Composite AI Risk Score (0-100) & Decision Tiering (Approve/Review/Reject)
+│       └── chatbot.py       # TrustLens Copilot for KYC compliance queries and audit explanations
+├── frontend/
+│   ├── index.html           # Modern Cyberpunk/Glassmorphic dashboard with drag-drop & webcam
+│   ├── static.css           # Bespoke responsive design system, animations & SVG risk gauge
+│   └── app.js               # Client application logic, ELA toggle slider, and Copilot chat
+├── data/
+│   ├── generate_samples.py  # Test data synthesizer with valid Aadhaar & tampered PAN
+│   ├── sample_valid_aadhaar.png
+│   ├── sample_tampered_pan.png
+│   ├── sample_passport.png
+│   └── sample_selfie.png
+├── .env.example             # Configuration variables
+├── .env                     # Local environment settings & API keys
+├── .gitignore               # Ignored cache, virtual environment, and temp files
+├── README.md                # Comprehensive documentation, diagrams & quick start guide
+└── ANTIGRAVITY_PROMPT.txt   # This prompt and system specification file
+
+KEY CORE MODULES & ALGORITHMS:
+
+1. AADHAAR VERHOEFF CHECKSUM (services/validation.py):
+   - Implements the Dihedral Group D5 multiplication table, permutation matrix, and inverse table.
+   - Validates whether a 12-digit number sequence is authentic according to UIDAI standard.
+   - Flag any mathematical mismatch as critical fraud.
+
+2. PAN CARD ENTITY & SURNAME LOGIC (services/validation.py):
+   - Structure: 5 letters, 4 digits, 1 check letter.
+   - 4th character defines entity type (P for Individual, C for Company, F for Firm, etc.).
+   - 5th character for individual PAN ('P') must match the first letter of cardholder's surname.
+
+3. ERROR LEVEL ANALYSIS - ELA (services/tamper.py):
+   - Re-compress image at JPEG quality 90 to an in-memory buffer.
+   - Calculate absolute pixel difference: cv2.absdiff(original, recompressed).
+   - Scale difference (x20) and render JET colormap heatmap.
+   - Identify spliced patches and foreign noise distributions.
+
+4. BIOMETRIC FACE VERIFICATION & LIVENESS (services/face.py):
+   - Isolate face region from document photo.
+   - Extract face from live webcam selfie.
+   - Calculate HSV color histogram correlation, template cross-correlation, and structural edges.
+   - Run 2D FFT frequency spectrum check for screen moiré patterns (detects replay attacks).
+
+5. COMPOSITE RISK ENGINE (services/risk.py):
+   - Fuses OCR confidence (20%), Checksums (30%), ELA forensics (30%), Biometrics (20%).
+   - Tiers: LOW_RISK (<30) -> APPROVE, MEDIUM_RISK (30-65) -> MANUAL REVIEW, HIGH_RISK (>65) -> REJECT.
+
+6. TRUSTLENS AI COPILOT (services/chatbot.py):
+   - Contextual fraud investigator assistant powered by Gemini 2.5 Flash / offline rule engine.
+   - Answers inquiries on ELA heatmaps, Verhoeff mathematics, and KYC compliance.
+
+EXECUTION INSTRUCTIONS:
+To run the server:
+  uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
+Access the user dashboard at:
+  http://localhost:8000
+================================================================================

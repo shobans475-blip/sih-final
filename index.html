@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="TrustLens AI is an enterprise-grade AI Document Screening and KYC Biometric Fraud Detection Platform with ELA Tamper Forensics, Verhoeff Checksum Verification, and SHA-256 Audit Integrity.">
+  <title>TrustLens AI | Secure Document Screening &amp; Biometric Forensics</title>
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    :root {
+      --font-primary: 'Plus Jakarta Sans', sans-serif;
+      --font-display: 'Outfit', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --bg-darkest: #060911;
+      --bg-card: rgba(16, 24, 43, 0.75);
+      --bg-card-solid: #10182b;
+      --bg-input: rgba(11, 17, 32, 0.85);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --accent-cyan: #00f2fe;
+      --accent-blue: #3b82f6;
+      --accent-purple: #8b5cf6;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #ef4444;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-primary);
+      background-color: var(--bg-darkest);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+    .ambient-glow {
+      position: fixed; border-radius: 50%; filter: blur(140px); pointer-events: none; z-index: 0; opacity: 0.35;
+    }
+    .glow-cyan { top: -100px; left: 15%; width: 500px; height: 500px; background: radial-gradient(circle, #00f2fe, #3b82f6 60%, transparent); }
+    .glow-purple { bottom: 50px; right: 10%; width: 600px; height: 600px; background: radial-gradient(circle, #8b5cf6, #3b82f6 60%, transparent); }
+
+    /* Header */
+    .app-header {
+      position: sticky; top: 0; z-index: 50; background: rgba(10, 15, 29, 0.85); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle); padding: 0.85rem 1.75rem;
+    }
+    .nav-container { max-width: 1440px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+    .brand-group { display: flex; align-items: center; gap: 0.85rem; }
+    .brand-logo-icon {
+      width: 44px; height: 44px; border-radius: var(--radius-md);
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.2), rgba(139, 92, 246, 0.3));
+      border: 1px solid rgba(0, 242, 254, 0.5); display: flex; align-items: center; justify-content: center;
+      position: relative; color: var(--accent-cyan); font-size: 1.3rem; box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+    }
+    .pulse-beacon {
+      position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: var(--accent-emerald);
+      border-radius: 50%; box-shadow: 0 0 8px var(--accent-emerald); animation: ping 2s infinite;
+    }
+    @keyframes ping { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.6); opacity: 0.5; } }
+    .brand-name { font-family: var(--font-display); font-size: 1.35rem; font-weight: 800; color: #fff; }
+    .text-gradient { background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .brand-tagline { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; letter-spacing: 0.04em; }
+
+    .status-ribbon {
+      display: flex; align-items: center; gap: 0.6rem; background: rgba(6, 10, 20, 0.6); padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-full); border: 1px solid var(--border-subtle);
+    }
+    .status-pill { display: flex; align-items: center; gap: 0.45rem; padding: 0.25rem 0.6rem; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; }
+    .dot-green { background: var(--accent-emerald); box-shadow: 0 0 6px var(--accent-emerald); }
+    .dot-cyan { background: var(--accent-cyan); box-shadow: 0 0 6px var(--accent-cyan); }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle); color: var(--text-primary); padding: 0.5rem 1rem;
+      border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: var(--transition);
+    }
+    .btn-ghost:hover:not(:disabled) { background: rgba(0, 242, 254, 0.12); border-color: rgba(0, 242, 254, 0.4); color: var(--accent-cyan); }
+    .btn-ghost:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* Security Top Banner */
+    .security-bar {
+      max-width: 1440px; margin: 1rem auto 0; padding: 0.55rem 1.25rem;
+      background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: var(--radius-md); display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 0.75rem; font-size: 0.78rem; position: relative; z-index: 10;
+    }
+    .sec-badge-group { display: flex; align-items: center; gap: 1rem; color: #a7f3d0; font-weight: 600; }
+    .sec-badge-group i { color: var(--accent-emerald); }
+
+    /* Presets Bar */
+    .sample-presets-bar {
+      max-width: 1440px; margin: 0.75rem auto 0; padding: 0.75rem 1.25rem;
+      background: rgba(16, 24, 43, 0.5); backdrop-filter: blur(12px); border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md); display: flex; align-items: center; flex-wrap: wrap; gap: 1rem;
+      position: relative; z-index: 10;
+    }
+    .presets-intro { display: flex; align-items: center; gap: 0.5rem; color: var(--accent-cyan); font-weight: 600; font-size: 0.85rem; }
+    .presets-buttons { display: flex; align-items: center; flex-wrap: wrap; gap: 0.65rem; }
+    .preset-btn {
+      display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle); color: var(--text-secondary); padding: 0.4rem 0.85rem;
+      border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: var(--transition);
+    }
+    .preset-btn:hover { background: rgba(255, 255, 255, 0.1); color: #fff; transform: translateY(-1px); }
+    .preset-badge { font-size: 0.68rem; font-weight: 700; padding: 0.15rem 0.4rem; border-radius: 4px; }
+    .badge-pass { background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald); }
+    .badge-fail { background: rgba(239, 68, 68, 0.2); color: var(--accent-rose); }
+
+    /* Workspace */
+    .main-workspace { max-width: 1440px; margin: 0 auto; padding: 1.25rem 1.5rem 3rem; position: relative; z-index: 10; }
+    .workspace-grid { display: grid; grid-template-columns: 460px 1fr; gap: 1.5rem; }
+    @media (max-width: 1024px) { .workspace-grid { grid-template-columns: 1fr; } }
+
+    .panel {
+      background: var(--bg-card); backdrop-filter: blur(16px); border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg); padding: 1.5rem; display: flex; flex-direction: column;
+    }
+    .panel-header { margin-bottom: 1.25rem; }
+    .panel-title-wrap { display: flex; align-items: center; gap: 0.85rem; }
+    .panel-icon {
+      width: 40px; height: 40px; border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.15), rgba(59, 130, 246, 0.15));
+      border: 1px solid rgba(0, 242, 254, 0.3); color: var(--accent-cyan); display: flex; align-items: center; justify-content: center;
+    }
+    .panel-title { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: #fff; }
+    .panel-sub { font-size: 0.8rem; color: var(--text-muted); }
+
+    .form-group { display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 1rem; }
+    .field-label { font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); display: flex; justify-content: space-between; }
+    .required-tag { color: var(--accent-cyan); font-size: 0.72rem; }
+    .btn-micro {
+      background: rgba(0, 242, 254, 0.1); border: 1px solid rgba(0, 242, 254, 0.3); color: var(--accent-cyan);
+      font-size: 0.72rem; font-weight: 600; padding: 0.2rem 0.55rem; border-radius: var(--radius-full); cursor: pointer;
+    }
+
+    /* Dropzone */
+    .dropzone {
+      border: 2px dashed rgba(255, 255, 255, 0.15); border-radius: var(--radius-md); background: rgba(10, 16, 30, 0.5);
+      padding: 1.5rem 1rem; text-align: center; cursor: pointer; position: relative; transition: var(--transition);
+    }
+    .dropzone:hover, .dropzone.drag-active { border-color: var(--accent-cyan); background: rgba(0, 242, 254, 0.04); }
+    .dropzone-mini { padding: 0.85rem; }
+    .file-input-hidden { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+    .dropzone-icon { font-size: 2.2rem; color: var(--accent-cyan); margin-bottom: 0.5rem; }
+    .dropzone-text .primary-text { font-size: 0.88rem; font-weight: 600; color: #fff; }
+    .dropzone-text .highlight { color: var(--accent-cyan); text-decoration: underline; }
+    .dropzone-text .secondary-text { font-size: 0.74rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+    .dropzone-preview {
+      display: flex; align-items: center; gap: 0.85rem; background: rgba(16, 24, 43, 0.9); padding: 0.6rem 0.85rem;
+      border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); text-align: left;
+    }
+    .preview-thumbnail { width: 54px; height: 44px; object-fit: cover; border-radius: 6px; }
+    .thumbnail-selfie { width: 44px; height: 44px; border-radius: 50%; }
+    .preview-meta { flex: 1; overflow: hidden; }
+    .file-name { font-size: 0.82rem; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .file-badge { font-size: 0.72rem; color: var(--accent-cyan); }
+    .btn-icon-danger {
+      background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--accent-rose);
+      width: 32px; height: 32px; border-radius: var(--radius-sm); cursor: pointer;
+    }
+
+    .custom-select, .custom-input {
+      width: 100%; background: var(--bg-input); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);
+      padding: 0.65rem 1rem; color: #fff; font-family: inherit; font-size: 0.85rem; outline: none;
+    }
+    .custom-select:focus, .custom-input:focus { border-color: var(--accent-cyan); }
+
+    .btn-glow-primary {
+      width: 100%; position: relative; overflow: hidden;
+      background: linear-gradient(135deg, #00f2fe 0%, #3b82f6 50%, #8b5cf6 100%); border: none;
+      border-radius: var(--radius-md); padding: 0.95rem 1.5rem; color: #030712; font-family: var(--font-display);
+      font-size: 1rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 20px rgba(0, 242, 254, 0.35); transition: var(--transition);
+    }
+    .btn-glow-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(0, 242, 254, 0.55); }
+    .btn-content { display: flex; align-items: center; justify-content: center; gap: 0.65rem; }
+
+    /* Results */
+    .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 3rem 1.5rem; min-height: 480px; }
+    .empty-illustration { position: relative; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; }
+    .empty-icon { font-size: 2.8rem; color: var(--accent-cyan); filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.5)); }
+    .empty-title { font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem; }
+    .empty-desc { font-size: 0.88rem; color: var(--text-secondary); max-width: 480px; margin-bottom: 1.5rem; }
+
+    .loading-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem 1.5rem; min-height: 480px; text-align: center; }
+    .scanning-scanner {
+      width: 80px; height: 90px; border: 2px solid rgba(0, 242, 254, 0.4); border-radius: var(--radius-sm);
+      position: relative; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem;
+    }
+    .scanner-icon { font-size: 2.2rem; color: var(--accent-cyan); }
+    .scanner-laser {
+      position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: #00f2fe; box-shadow: 0 0 12px #00f2fe;
+      animation: laser 1.5s infinite alternate ease-in-out;
+    }
+    @keyframes laser { 0% { top: 0%; } 100% { top: 97%; } }
+    .loading-steps { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.84rem; text-align: left; }
+    .step-active { color: var(--accent-cyan); font-weight: 600; }
+    .step-done { color: var(--accent-emerald); }
+
+    /* Results Dashboard */
+    .results-dashboard { display: flex; flex-direction: column; gap: 1.25rem; }
+    .risk-overview-card {
+      background: linear-gradient(135deg, rgba(16, 24, 43, 0.95), rgba(10, 16, 32, 0.9));
+      border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem;
+      display: flex; align-items: center; gap: 1.75rem;
+    }
+    .gauge-container { position: relative; width: 130px; height: 130px; flex-shrink: 0; }
+    .risk-gauge-svg { transform: rotate(-90deg); }
+    .gauge-bg { fill: none; stroke: rgba(255, 255, 255, 0.08); stroke-width: 10; }
+    .gauge-fill { fill: none; stroke: var(--accent-emerald); stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
+    .gauge-score-wrap { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+    .gauge-score-number { font-family: var(--font-display); font-size: 2.2rem; font-weight: 800; color: #fff; line-height: 1; }
+    .gauge-score-label { font-size: 0.65rem; font-weight: 700; color: var(--text-muted); }
+
+    .decision-pill-badge {
+      display: inline-block; font-size: 0.75rem; font-weight: 800; padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-full); margin-bottom: 0.5rem;
+    }
+    .decision-heading { font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
+    .decision-sub { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4; margin-bottom: 0.85rem; }
+
+    /* Security Audit Strip inside Result */
+    .sec-audit-strip {
+      background: rgba(6, 10, 20, 0.7); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);
+      padding: 0.65rem 0.85rem; font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary);
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;
+    }
+    .sec-hash-val { color: var(--accent-cyan); word-break: break-all; }
+
+    /* Tabs */
+    .results-tabs { display: flex; gap: 0.5rem; border-bottom: 1px solid var(--border-subtle); overflow-x: auto; }
+    .tab-btn {
+      background: transparent; border: none; color: var(--text-muted); font-family: inherit; font-size: 0.85rem;
+      font-weight: 600; padding: 0.65rem 1rem; cursor: pointer; white-space: nowrap; transition: var(--transition);
+    }
+    .tab-btn.active { color: var(--accent-cyan); background: rgba(0, 242, 254, 0.1); border-bottom: 2px solid var(--accent-cyan); }
+    .tab-pane { display: none; flex-direction: column; gap: 1.25rem; }
+    .tab-pane.active { display: flex; }
+
+    .audit-card { background: rgba(14, 20, 36, 0.75); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem; }
+    .card-title { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.85rem; }
+
+    .flag-alert { padding: 0.65rem 0.85rem; border-radius: var(--radius-sm); font-size: 0.82rem; display: flex; align-items: flex-start; gap: 0.65rem; margin-bottom: 0.5rem; }
+    .flag-critical { background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; }
+    .flag-warning { background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3); color: #fde68a; }
+    .flag-info { background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); color: #a7f3d0; }
+
+    .checks-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .checks-table th { background: rgba(6, 10, 20, 0.5); color: var(--text-muted); padding: 0.65rem; border-bottom: 1px solid var(--border-subtle); text-align: left; }
+    .checks-table td { padding: 0.75rem 0.65rem; border-bottom: 1px solid var(--border-subtle); color: var(--text-secondary); }
+    .check-status-badge { font-weight: 700; font-size: 0.72rem; padding: 0.2rem 0.5rem; border-radius: 4px; }
+    .check-pass { background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald); }
+    .check-fail { background: rgba(239, 68, 68, 0.2); color: var(--accent-rose); }
+
+    /* ELA Viewer */
+    .heatmap-comparison-viewer { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    .viewer-box { background: rgba(6, 10, 20, 0.7); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 0.75rem; text-align: center; }
+    .viewer-tag { display: block; font-size: 0.72rem; font-weight: 700; color: var(--accent-cyan); margin-bottom: 0.5rem; }
+    .viewer-img { width: 100%; max-height: 280px; object-fit: contain; }
+
+    /* Biometrics */
+    .biometric-comparison-grid { display: flex; align-items: center; justify-content: space-around; flex-wrap: wrap; gap: 1.5rem; padding: 1.5rem 0; }
+    .face-crop-frame { width: 140px; height: 160px; border-radius: var(--radius-md); border: 2px solid var(--border-subtle); overflow: hidden; background: #000; }
+    .face-crop-img { width: 100%; height: 100%; object-fit: cover; }
+    .bio-ring-indicator { width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--accent-emerald); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .bio-pct { font-family: var(--font-display); font-size: 1.7rem; font-weight: 800; color: #fff; }
+
+    /* OCR Fields & PII Masking */
+    .ocr-fields-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0.75rem; }
+    .ocr-field-card { background: rgba(6, 10, 20, 0.5); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 0.75rem; position: relative; }
+    .ocr-field-lbl { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; }
+    .ocr-field-val { font-size: 0.92rem; font-weight: 600; color: #fff; margin-top: 0.25rem; font-family: var(--font-mono); }
+    .pii-toggle-btn { background: transparent; border: none; color: var(--accent-cyan); font-size: 0.75rem; cursor: pointer; margin-left: 0.5rem; }
+
+    /* Copilot Drawer */
+    .copilot-drawer {
+      position: fixed; top: 0; right: -420px; width: 400px; height: 100vh;
+      background: rgba(10, 15, 29, 0.96); backdrop-filter: blur(24px); border-left: 1px solid var(--border-subtle);
+      z-index: 100; display: flex; flex-direction: column; transition: right 0.35s ease;
+    }
+    .copilot-drawer.open { right: 0; }
+    .copilot-header { padding: 1.25rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; }
+    .copilot-chat-stream { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.85rem; }
+    .chat-bubble { max-width: 88%; padding: 0.75rem 0.95rem; border-radius: var(--radius-md); font-size: 0.82rem; }
+    .bot-bubble { align-self: flex-start; background: rgba(20, 30, 52, 0.8); border: 1px solid var(--border-subtle); }
+    .user-bubble { align-self: flex-end; background: linear-gradient(135deg, #00f2fe, #3b82f6); color: #030712; font-weight: 600; }
+    .copilot-input-area { padding: 1rem; border-top: 1px solid var(--border-subtle); display: flex; gap: 0.5rem; }
+
+    /* Webcam Dialog */
+    .webcam-dialog { border: none; border-radius: var(--radius-lg); background: transparent; margin: auto; max-width: 480px; width: 90%; }
+    .webcam-dialog::backdrop { background: rgba(3, 7, 18, 0.8); backdrop-filter: blur(8px); }
+    .modal-card { background: var(--bg-card-solid); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+    .webcam-video { width: 100%; height: 260px; object-fit: cover; border-radius: var(--radius-sm); transform: scaleX(-1); background: #000; }
+
+    .toast-shelf { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 200; display: flex; flex-direction: column; gap: 0.6rem; }
+    .toast { background: rgba(16, 24, 43, 0.95); border: 1px solid var(--border-subtle); padding: 0.65rem 1rem; border-radius: var(--radius-sm); font-size: 0.82rem; color: #fff; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <div class="ambient-glow glow-cyan"></div>
+  <div class="ambient-glow glow-purple"></div>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="nav-container">
+      <div class="brand-group">
+        <div class="brand-logo-icon">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span class="pulse-beacon"></span>
+        </div>
+        <div>
+          <span class="brand-name">TrustLens<span class="text-gradient">AI</span></span>
+          <div class="brand-tagline">SECURE KYC SCREENING &amp; ELA FORENSICS</div>
+        </div>
+      </div>
+
+      <div class="status-ribbon">
+        <div class="status-pill"><span class="status-dot dot-green"></span> Verhoeff D5</div>
+        <div class="status-pill"><span class="status-dot dot-cyan"></span> ELA Heatmap</div>
+        <div class="status-pill"><span class="status-dot dot-green"></span> SHA-256 Provenance</div>
+      </div>
+
+      <div style="display:flex; gap:0.75rem;">
+        <button id="btn-open-copilot-nav" class="btn-ghost"><i class="fa-solid fa-robot"></i> Copilot</button>
+        <button id="btn-export-report" class="btn-ghost" disabled><i class="fa-solid fa-file-arrow-down"></i> Export Audit</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Security Protocol Strip -->
+  <div class="security-bar">
+    <div class="sec-badge-group">
+      <span><i class="fa-solid fa-lock"></i> DPDP India &amp; UIDAI Masking Compliant</span>
+      <span><i class="fa-solid fa-fingerprint"></i> SHA-256 Document Integrity</span>
+      <span><i class="fa-solid fa-shield-virus"></i> Magic-Byte Binary Sanitizer</span>
+    </div>
+    <span style="color:#6ee7b7;"><i class="fa-solid fa-circle-check"></i> Enterprise Security Active</span>
+  </div>
+
+  <!-- Presets Bar -->
+  <section class="sample-presets-bar">
+    <div class="presets-intro"><i class="fa-solid fa-flask-vial"></i> <span>Quick Demo Presets:</span></div>
+    <div class="presets-buttons">
+      <button class="preset-btn" id="preset-aadhaar"><span class="preset-badge badge-pass">VALID</span> Aadhaar (Verhoeff Pass)</button>
+      <button class="preset-btn" id="preset-pan"><span class="preset-badge badge-fail">TAMPERED</span> PAN Card (Photoshop Altered)</button>
+      <button class="preset-btn" id="preset-passport"><span class="preset-badge badge-pass">VALID</span> Indian Passport (MRZ)</button>
+    </div>
+  </section>
+
+  <!-- Main Workspace -->
+  <main class="main-workspace">
+    <div class="workspace-grid">
+
+      <!-- Left Hub: Ingestion -->
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title-wrap">
+            <div class="panel-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+            <div>
+              <h2 class="panel-title">Document Ingestion</h2>
+              <p class="panel-sub">Payload verified against polyglots &amp; DoS attacks (10MB limit)</p>
+            </div>
+          </div>
+        </div>
+
+        <form id="screening-form" onsubmit="return false;">
+          <div class="form-group">
+            <label class="field-label" for="doc-file-input">
+              <span>Primary Document (Image or PDF)</span>
+              <span class="required-tag">*Required</span>
+            </label>
+            <div class="dropzone" id="doc-dropzone">
+              <input type="file" id="doc-file-input" accept="image/png,image/jpeg,image/webp,application/pdf" class="file-input-hidden" required>
+              <div id="doc-dropzone-content">
+                <i class="fa-solid fa-id-card-clip dropzone-icon"></i>
+                <div class="dropzone-text">
+                  <p class="primary-text">Drag &amp; drop document, or <span class="highlight">browse</span></p>
+                  <p class="secondary-text">Aadhaar, PAN, Passport (PNG, JPG, WEBP, PDF)</p>
+                </div>
+              </div>
+              <div class="dropzone-preview hidden" id="doc-preview-wrap">
+                <img id="doc-preview-img" src="" alt="Preview" class="preview-thumbnail">
+                <div class="preview-meta">
+                  <span id="doc-preview-name" class="file-name">document.jpg</span>
+                  <span class="file-badge">Cryptographic Magic Verified</span>
+                </div>
+                <button type="button" id="btn-remove-doc" class="btn-icon-danger"><i class="fa-solid fa-trash-can"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="field-label" for="doc-type-select">Document Standard</label>
+            <select id="doc-type-select" class="custom-select">
+              <option value="AUTO" selected>Auto-Detect Standard (AI Classification)</option>
+              <option value="AADHAAR">UIDAI Aadhaar Card</option>
+              <option value="PAN">Income Tax PAN Card</option>
+              <option value="PASSPORT">Republic of India Passport</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.25rem;">
+              <label class="field-label">Biometric Verification</label>
+              <button type="button" id="btn-open-camera" class="btn-micro"><i class="fa-solid fa-camera"></i> Live Webcam</button>
+            </div>
+            <div class="dropzone dropzone-mini" id="selfie-dropzone">
+              <input type="file" id="selfie-file-input" accept="image/png,image/jpeg,image/webp" class="file-input-hidden">
+              <div id="selfie-dropzone-content" style="display:flex; align-items:center; gap:0.5rem;">
+                <i class="fa-solid fa-user-shield" style="color:var(--accent-purple);"></i>
+                <span style="font-size:0.8rem; color:var(--text-secondary);">Drop selfie or click webcam</span>
+              </div>
+              <div class="dropzone-preview hidden" id="selfie-preview-wrap">
+                <img id="selfie-preview-img" src="" alt="Selfie" class="preview-thumbnail thumbnail-selfie">
+                <div class="preview-meta">
+                  <span id="selfie-preview-name" class="file-name">selfie.jpg</span>
+                  <span class="file-badge">Biometric Ready</span>
+                </div>
+                <button type="button" id="btn-remove-selfie" class="btn-icon-danger"><i class="fa-solid fa-trash-can"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" id="btn-run-screening" class="btn-glow-primary">
+            <span class="btn-content"><i class="fa-solid fa-fingerprint"></i> Run Secure AI Screening</span>
+          </button>
+        </form>
+      </section>
+
+      <!-- Right Hub: Results -->
+      <section class="panel">
+        <div id="results-empty-state" class="empty-state">
+          <div class="empty-illustration"><i class="fa-solid fa-shield-cat empty-icon"></i></div>
+          <h3 class="empty-title">Awaiting Document Submission</h3>
+          <p class="empty-desc">Upload an Indian ID document on the left or select a <strong>Quick Demo Preset</strong> to run multi-modal AI screening, ELA forensics, and SHA-256 integrity verification.</p>
+        </div>
+
+        <div id="results-loading-state" class="loading-state hidden">
+          <div class="scanning-scanner">
+            <div class="scanner-laser"></div>
+            <i class="fa-solid fa-file-shield scanner-icon"></i>
+          </div>
+          <h3 style="font-family:var(--font-display); font-size:1.25rem; margin-bottom:1rem;">Running Cryptographic &amp; AI Forensics...</h3>
+          <ul class="loading-steps">
+            <li class="step-active"><i class="fa-solid fa-spinner fa-spin"></i> Checking binary magic bytes &amp; SHA-256 fingerprint...</li>
+            <li><i class="fa-regular fa-clock"></i> Computing Verhoeff dihedral D5 checksum...</li>
+            <li><i class="fa-regular fa-clock"></i> Generating Error Level Analysis (ELA) heatmap...</li>
+            <li><i class="fa-regular fa-clock"></i> Verifying biometric face match &amp; liveness...</li>
+          </ul>
+        </div>
+
+        <div id="results-dashboard" class="results-dashboard hidden">
+          <div class="risk-overview-card">
+            <div class="gauge-container">
+              <svg class="risk-gauge-svg" viewBox="0 0 160 160" width="130" height="130">
+                <circle class="gauge-bg" cx="80" cy="80" r="66" />
+                <circle class="gauge-fill" id="risk-gauge-bar" cx="80" cy="80" r="66" stroke-dasharray="414" stroke-dashoffset="414" />
+              </svg>
+              <div class="gauge-score-wrap">
+                <span class="gauge-score-number" id="gauge-score-value">0</span>
+                <span class="gauge-score-label">RISK SCORE</span>
+              </div>
+            </div>
+
+            <div style="flex:1;">
+              <div class="decision-pill-badge" id="risk-tier-badge">APPROVED</div>
+              <h3 class="decision-heading" id="risk-decision-title">Document Authenticity Verified</h3>
+              <p class="decision-sub" id="risk-decision-recommendation"></p>
+              
+              <div class="sec-audit-strip">
+                <div><span>AUDIT TOKEN: </span><strong id="audit-token-val" class="sec-hash-val">TL-...</strong></div>
+                <div><span>SHA-256: </span><span id="doc-sha256-val" class="sec-hash-val">...</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section Tabs -->
+          <div class="results-tabs">
+            <button class="tab-btn active" data-target="tab-pane-overview"><i class="fa-solid fa-list-check"></i> Audit Matrix</button>
+            <button class="tab-btn" data-target="tab-pane-tamper"><i class="fa-solid fa-magnifying-glass-chart"></i> ELA Tamper Forensics</button>
+            <button class="tab-btn" data-target="tab-pane-biometric"><i class="fa-solid fa-user-astronaut"></i> Biometrics</button>
+            <button class="tab-btn" data-target="tab-pane-ocr"><i class="fa-solid fa-lock"></i> Extracted OCR (PII Masked)</button>
+          </div>
+
+          <!-- Tab 1: Overview -->
+          <div class="tab-pane active" id="tab-pane-overview">
+            <div class="audit-card">
+              <h4 class="card-title"><i class="fa-solid fa-triangle-exclamation"></i> Security Findings</h4>
+              <div id="flags-list-container"></div>
+            </div>
+
+            <div class="audit-card">
+              <h4 class="card-title"><i class="fa-solid fa-square-root-variable"></i> Checksum &amp; Mathematical Rules</h4>
+              <table class="checks-table">
+                <thead>
+                  <tr><th>Verification Rule</th><th>Status</th><th>Evidence / Mathematical Details</th></tr>
+                </thead>
+                <tbody id="checks-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Tab 2: ELA Tamper -->
+          <div class="tab-pane" id="tab-pane-tamper">
+            <div class="audit-card">
+              <h4 class="card-title"><i class="fa-solid fa-radiation"></i> Error Level Analysis (ELA) Heatmap Comparison</h4>
+              <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:1rem;">Modified or digitally pasted regions fluoresce as bright red/yellow hot spots due to compression anomalies.</p>
+              <div class="heatmap-comparison-viewer">
+                <div class="viewer-box">
+                  <span class="viewer-tag">Uploaded Document</span>
+                  <img id="tamper-view-orig" src="" alt="Original" class="viewer-img">
+                </div>
+                <div class="viewer-box">
+                  <span class="viewer-tag" style="color:var(--accent-cyan);">JET Compression Heatmap</span>
+                  <img id="tamper-view-heatmap" src="" alt="Heatmap" class="viewer-img">
+                </div>
+              </div>
+              <div id="tamper-findings-box" style="font-size:0.82rem; color:var(--text-secondary); line-height:1.5;"></div>
+            </div>
+          </div>
+
+          <!-- Tab 3: Biometrics -->
+          <div class="tab-pane" id="tab-pane-biometric">
+            <div class="audit-card">
+              <h4 class="card-title"><i class="fa-solid fa-camera-rotate"></i> Biometric Facial Comparison</h4>
+              <div class="biometric-comparison-grid">
+                <div>
+                  <div class="face-crop-frame"><img id="bio-id-crop" src="" class="face-crop-img"></div>
+                  <span style="font-size:0.75rem; color:var(--accent-cyan); display:block; text-align:center; margin-top:4px;">ID Photo Isolated</span>
+                </div>
+                <div style="text-align:center;">
+                  <div class="bio-ring-indicator" id="bio-ring">
+                    <span class="bio-pct" id="bio-match-pct">0%</span>
+                    <span style="font-size:0.6rem; color:var(--text-muted);">MATCH</span>
+                  </div>
+                  <div id="bio-verdict-badge" class="decision-pill-badge" style="margin-top:0.5rem;">PENDING</div>
+                </div>
+                <div>
+                  <div class="face-crop-frame"><img id="bio-selfie-crop" src="" class="face-crop-img"></div>
+                  <span style="font-size:0.75rem; color:var(--accent-cyan); display:block; text-align:center; margin-top:4px;">Live Selfie Isolated</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab 4: OCR & Masked PII -->
+          <div class="tab-pane" id="tab-pane-ocr">
+            <div class="audit-card">
+              <h4 class="card-title"><i class="fa-solid fa-lock"></i> DPDP-Compliant Extracted Fields</h4>
+              <div class="ocr-fields-grid" id="ocr-fields-grid"></div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Copilot Drawer -->
+  <aside class="copilot-drawer" id="copilot-drawer">
+    <div class="copilot-header">
+      <div style="display:flex; align-items:center; gap:0.75rem;">
+        <i class="fa-solid fa-robot" style="font-size:1.5rem; color:var(--accent-cyan);"></i>
+        <div>
+          <h3 style="font-family:var(--font-display); font-size:1.1rem; color:#fff;">TrustLens Copilot</h3>
+          <span style="font-size:0.72rem; color:var(--text-muted);">AI KYC Forensic Assistant</span>
+        </div>
+      </div>
+      <button id="btn-close-copilot" class="btn-ghost" style="padding:0.3rem 0.6rem;"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="copilot-chat-stream" id="copilot-messages">
+      <div class="chat-bubble bot-bubble">
+        Hello! I am your AI KYC Forensic &amp; Compliance Copilot. Ask me about Verhoeff checksums, ELA heatmaps, or fraud scores!
+      </div>
+    </div>
+    <form id="copilot-form" class="copilot-input-area" onsubmit="return false;">
+      <input type="text" id="copilot-input" class="custom-input" placeholder="Ask about this document..." autocomplete="off">
+      <button type="submit" class="btn-ghost" style="color:var(--accent-cyan);"><i class="fa-solid fa-paper-plane"></i></button>
+    </form>
+  </aside>
+
+  <!-- Live Webcam Modal -->
+  <dialog class="webcam-dialog" id="webcam-dialog">
+    <div class="modal-card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="color:#fff;"><i class="fa-solid fa-camera"></i> Live Biometric Capture</h3>
+        <button id="btn-close-webcam" class="btn-ghost" style="padding:0.3rem 0.6rem;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <video id="webcam-video" autoplay playsinline class="webcam-video"></video>
+      <canvas id="webcam-canvas" class="hidden"></canvas>
+      <button id="btn-capture-shutter" class="btn-glow-primary"><i class="fa-solid fa-camera-retro"></i> Capture Selfie</button>
+    </div>
+  </dialog>
+
+  <div class="toast-shelf" id="toast-shelf"></div>
+
+  <!-- Consolidated JavaScript -->
+  <script>
+    let selectedDocFile = null;
+    let selectedSelfieFile = null;
+    let currentStream = null;
+    let lastScreeningData = null;
+    let unmaskPII = false;
+
+    const docDropzone = document.getElementById('doc-dropzone');
+    const docFileInput = document.getElementById('doc-file-input');
+    const docPreviewWrap = document.getElementById('doc-preview-wrap');
+    const docPreviewImg = document.getElementById('doc-preview-img');
+    const docPreviewName = document.getElementById('doc-preview-name');
+    const docDropContent = document.getElementById('doc-dropzone-content');
+    const btnRemoveDoc = document.getElementById('btn-remove-doc');
+
+    const selfieDropzone = document.getElementById('selfie-dropzone');
+    const selfieFileInput = document.getElementById('selfie-file-input');
+    const selfiePreviewWrap = document.getElementById('selfie-preview-wrap');
+    const selfiePreviewImg = document.getElementById('selfie-preview-img');
+    const selfiePreviewName = document.getElementById('selfie-preview-name');
+    const selfieDropContent = document.getElementById('selfie-dropzone-content');
+    const btnRemoveSelfie = document.getElementById('btn-remove-selfie');
+
+    const btnOpenCamera = document.getElementById('btn-open-camera');
+    const webcamDialog = document.getElementById('webcam-dialog');
+    const webcamVideo = document.getElementById('webcam-video');
+    const webcamCanvas = document.getElementById('webcam-canvas');
+    const btnCloseWebcam = document.getElementById('btn-close-webcam');
+    const btnCaptureShutter = document.getElementById('btn-capture-shutter');
+
+    const btnRunScreening = document.getElementById('btn-run-screening');
+    const resultsEmptyState = document.getElementById('results-empty-state');
+    const resultsLoadingState = document.getElementById('results-loading-state');
+    const resultsDashboard = document.getElementById('results-dashboard');
+    const btnExportReport = document.getElementById('btn-export-report');
+    const toastShelf = document.getElementById('toast-shelf');
+
+    const copilotDrawer = document.getElementById('copilot-drawer');
+    const btnOpenCopilotNav = document.getElementById('btn-open-copilot-nav');
+    const btnCloseCopilot = document.getElementById('btn-close-copilot');
+    const copilotForm = document.getElementById('copilot-form');
+    const copilotInput = document.getElementById('copilot-input');
+    const copilotMessages = document.getElementById('copilot-messages');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // File handlers
+      docDropzone.onclick = (e) => { if (!btnRemoveDoc.contains(e.target)) docFileInput.click(); };
+      docFileInput.onchange = (e) => { if (e.target.files[0]) handleDoc(e.target.files[0]); };
+      btnRemoveDoc.onclick = (e) => {
+        e.stopPropagation(); selectedDocFile = null; docFileInput.value = '';
+        docPreviewWrap.classList.add('hidden'); docDropContent.classList.remove('hidden');
+      };
+
+      selfieDropzone.onclick = (e) => { if (!btnRemoveSelfie.contains(e.target)) selfieFileInput.click(); };
+      selfieFileInput.onchange = (e) => { if (e.target.files[0]) handleSelfie(e.target.files[0]); };
+      btnRemoveSelfie.onclick = (e) => {
+        e.stopPropagation(); selectedSelfieFile = null; selfieFileInput.value = '';
+        selfiePreviewWrap.classList.add('hidden'); selfieDropContent.classList.remove('hidden');
+      };
+
+      // Webcam
+      btnOpenCamera.onclick = async () => {
+        try {
+          webcamDialog.showModal();
+          currentStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+          webcamVideo.srcObject = currentStream;
+        } catch (err) {
+          showToast('Camera error: ' + err.message, 'error');
+          webcamDialog.close();
+        }
+      };
+
+      const stopCam = () => {
+        if (currentStream) { currentStream.getTracks().forEach(t => t.stop()); currentStream = null; }
+        webcamDialog.close();
+      };
+      btnCloseWebcam.onclick = stopCam;
+
+      btnCaptureShutter.onclick = () => {
+        webcamCanvas.width = webcamVideo.videoWidth || 640;
+        webcamCanvas.height = webcamVideo.videoHeight || 480;
+        const ctx = webcamCanvas.getContext('2d');
+        ctx.translate(webcamCanvas.width, 0); ctx.scale(-1, 1);
+        ctx.drawImage(webcamVideo, 0, 0);
+        webcamCanvas.toBlob(b => {
+          handleSelfie(new File([b], 'webcam_selfie.jpg', { type: 'image/jpeg' }));
+          stopCam();
+          showToast('Webcam selfie captured!', 'success');
+        }, 'image/jpeg', 0.95);
+      };
+
+      // Presets
+      document.getElementById('preset-aadhaar').onclick = () => loadPreset('sample_valid_aadhaar.png', 'AADHAAR');
+      document.getElementById('preset-pan').onclick = () => loadPreset('sample_tampered_pan.png', 'PAN');
+      document.getElementById('preset-passport').onclick = () => loadPreset('sample_passport.png', 'PASSPORT');
+
+      // Tabs
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.onclick = () => {
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+          btn.classList.add('active');
+          document.getElementById(btn.getAttribute('data-target')).classList.add('active');
+        };
+      });
+
+      // Copilot
+      btnOpenCopilotNav.onclick = () => copilotDrawer.classList.toggle('open');
+      btnCloseCopilot.onclick = () => copilotDrawer.classList.remove('open');
+      copilotForm.onsubmit = async () => {
+        const q = copilotInput.value.trim();
+        if (!q) return;
+        copilotInput.value = '';
+        appendBubble(q, 'user');
+        const botB = appendBubble('Consulting AI engine...', 'bot');
+        try {
+          const res = await fetch('/api/chat', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ message: q, screening_context: lastScreeningData })
+          });
+          const d = await res.json();
+          botB.innerHTML = d.reply.replace(/^### (.*$)/gim, '<h4 style="color:#00f2fe;">$1</h4>').replace(/\n/g, '<br>');
+        } catch (e) {
+          botB.textContent = 'Error: ' + e.message;
+        }
+      };
+
+      btnRunScreening.onclick = executeScreening;
+
+      btnExportReport.onclick = () => {
+        if (!lastScreeningData) return;
+        const b = new Blob([JSON.stringify(lastScreeningData, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a'); a.href = URL.createObjectURL(b);
+        a.download = `TrustLens_Audit_${lastScreeningData.audit_token}.json`;
+        a.click();
+      };
+    });
+
+    function handleDoc(file) {
+      selectedDocFile = file;
+      docPreviewName.textContent = file.name;
+      const r = new FileReader();
+      r.onload = e => {
+        docPreviewImg.src = e.target.result;
+        docDropContent.classList.add('hidden');
+        docPreviewWrap.classList.remove('hidden');
+      };
+      r.readAsDataURL(file);
+      showToast(`Document loaded: ${file.name}`, 'info');
+    }
+
+    function handleSelfie(file) {
+      selectedSelfieFile = file;
+      selfiePreviewName.textContent = file.name;
+      const r = new FileReader();
+      r.onload = e => {
+        selfiePreviewImg.src = e.target.result;
+        selfieDropContent.classList.add('hidden');
+        selfiePreviewWrap.classList.remove('hidden');
+      };
+      r.readAsDataURL(file);
+    }
+
+    async function loadPreset(fn, type) {
+      try {
+        showToast('Loading preset: ' + fn, 'info');
+        const res = await fetch('/api/samples/' + fn);
+        const blob = await res.blob();
+        handleDoc(new File([blob], fn, { type: blob.type }));
+        document.getElementById('doc-type-select').value = type;
+        if (type !== 'PAN') {
+          const sRes = await fetch('/api/samples/sample_selfie.png');
+          if (sRes.ok) {
+            const sB = await sRes.blob();
+            handleSelfie(new File([sB], 'sample_selfie.png', { type: 'image/png' }));
+          }
+        }
+      } catch (e) { showToast(e.message, 'error'); }
+    }
+
+    async function executeScreening() {
+      if (!selectedDocFile) { showToast('Please select a document image first.', 'error'); return; }
+      resultsEmptyState.classList.add('hidden');
+      resultsDashboard.classList.add('hidden');
+      resultsLoadingState.classList.remove('hidden');
+
+      const fd = new FormData();
+      fd.append('document', selectedDocFile);
+      if (selectedSelfieFile) fd.append('selfie', selectedSelfieFile);
+      fd.append('doc_type', document.getElementById('doc-type-select').value);
+
+      try {
+        const res = await fetch('/api/screen', { method: 'POST', body: fd });
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.detail || 'Screening failed');
+        }
+        const data = await res.json();
+        lastScreeningData = data;
+        btnExportReport.removeAttribute('disabled');
+        renderResults(data);
+        resultsLoadingState.classList.add('hidden');
+        resultsDashboard.classList.remove('hidden');
+        showToast('Screening completed with SHA-256 verified token', 'success');
+      } catch (err) {
+        resultsLoadingState.classList.add('hidden');
+        resultsEmptyState.classList.remove('hidden');
+        showToast(err.message, 'error');
+      }
+    }
+
+    function renderResults(data) {
+      const { ocr, validation, tamper, face, risk, audit_token, document_sha256 } = data;
+      // Gauge
+      const score = Math.round(risk.risk_score);
+      const gaugeBar = document.getElementById('risk-gauge-bar');
+      gaugeBar.style.stroke = risk.badge_color;
+      gaugeBar.style.strokeDashoffset = 414.7 - (score / 100) * 414.7;
+      document.getElementById('gauge-score-value').textContent = score;
+
+      const badge = document.getElementById('risk-tier-badge');
+      badge.textContent = risk.action === 'APPROVE' ? 'APPROVED - AUTHENTIC' : (risk.action === 'MANUAL_REVIEW' ? 'MANUAL REVIEW' : 'REJECTED - TAMPERED');
+      badge.style.background = risk.badge_color + '25';
+      badge.style.color = risk.badge_color;
+
+      document.getElementById('risk-decision-title').textContent = risk.decision_title;
+      document.getElementById('risk-decision-recommendation').textContent = risk.recommendation;
+      document.getElementById('audit-token-val').textContent = audit_token;
+      document.getElementById('doc-sha256-val').textContent = document_sha256.substring(0, 20) + '...';
+
+      // Flags
+      const flagsCont = document.getElementById('flags-list-container');
+      flagsCont.innerHTML = '';
+      if (!risk.flags || risk.flags.length === 0) {
+        flagsCont.innerHTML = '<div class="flag-alert flag-info"><i class="fa-solid fa-circle-check"></i> Zero fraud anomalies detected. Mathematical checksum and forensics passed.</div>';
+      } else {
+        risk.flags.forEach(f => {
+          const cls = f.severity === 'CRITICAL' ? 'flag-critical' : 'flag-warning';
+          flagsCont.innerHTML += `<div class="flag-alert ${cls}"><i class="fa-solid fa-triangle-exclamation"></i> <div><strong>[${f.category}]</strong> ${f.message}</div></div>`;
+        });
+      }
+
+      // Checksum Table
+      const tb = document.getElementById('checks-table-body');
+      tb.innerHTML = '';
+      (validation.checks || []).forEach(c => {
+        const bCls = c.passed ? 'check-pass' : 'check-fail';
+        tb.innerHTML += `<tr><td><strong>${c.field}</strong></td><td><span class="check-status-badge ${bCls}">${c.passed ? 'PASSED' : 'FAILED'}</span></td><td>${c.details}</td></tr>`;
+      });
+
+      // ELA
+      if (docPreviewImg.src) document.getElementById('tamper-view-orig').src = docPreviewImg.src;
+      if (tamper.heatmap_base64) document.getElementById('tamper-view-heatmap').src = tamper.heatmap_base64;
+      const tBox = document.getElementById('tamper-findings-box');
+      tBox.innerHTML = `<strong>Tamper Score: ${tamper.tamper_score}/100</strong><br>` + (tamper.findings || []).map(f => '• ' + f).join('<br>');
+
+      // Biometrics
+      if (face.doc_face_crop_base64) document.getElementById('bio-id-crop').src = face.doc_face_crop_base64;
+      if (face.selfie_face_crop_base64) document.getElementById('bio-selfie-crop').src = face.selfie_face_crop_base64;
+      document.getElementById('bio-match-pct').textContent = face.selfie_provided ? `${Math.round(face.match_score)}%` : '--';
+      const bBadge = document.getElementById('bio-verdict-badge');
+      bBadge.textContent = face.is_match ? 'VERIFIED MATCH' : (face.selfie_provided ? 'MISMATCH' : 'NO SELFIE');
+      bBadge.style.color = face.is_match ? '#10b981' : '#ef4444';
+
+      // OCR Fields with PII Masking
+      renderOCRFields(ocr);
+    }
+
+    function renderOCRFields(ocr) {
+      const grid = document.getElementById('ocr-fields-grid');
+      grid.innerHTML = '';
+      const numToDisplay = unmaskPII ? (ocr.document_number || 'N/A') : (ocr.masked_document_number || ocr.document_number || 'N/A');
+
+      const items = [
+        { label: 'Document Type', val: ocr.document_type },
+        { label: 'Document ID Number', val: numToDisplay, isPII: true },
+        { label: 'Cardholder Name', val: ocr.full_name || 'N/A' },
+        { label: 'Date of Birth (DOB)', val: ocr.dob || 'N/A' },
+        { label: 'Issuing Authority', val: ocr.issuing_authority || 'N/A' }
+      ];
+
+      items.forEach(it => {
+        grid.innerHTML += `
+          <div class="ocr-field-card">
+            <span class="ocr-field-lbl">${it.label}</span>
+            <div class="ocr-field-val">
+              ${it.val}
+              ${it.isPII ? `<button class="pii-toggle-btn" onclick="togglePII()"><i class="fa-solid fa-${unmaskPII ? 'eye-slash' : 'eye'}"></i> ${unmaskPII ? 'Mask' : 'Reveal'}</button>` : ''}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function togglePII() {
+      unmaskPII = !unmaskPII;
+      if (lastScreeningData) renderOCRFields(lastScreeningData.ocr);
+    }
+
+    function appendBubble(txt, sender) {
+      const b = document.createElement('div');
+      b.className = `chat-bubble ${sender}-bubble`;
+      b.textContent = txt;
+      copilotMessages.appendChild(b);
+      copilotMessages.scrollTop = copilotMessages.scrollHeight;
+      return b;
+    }
+
+    function showToast(msg, type='info') {
+      const t = document.createElement('div');
+      t.className = `toast`;
+      t.textContent = msg;
+      toastShelf.appendChild(t);
+      setTimeout(() => t.remove(), 3000);
+    }
+  </script>
+</body>
+</html>
